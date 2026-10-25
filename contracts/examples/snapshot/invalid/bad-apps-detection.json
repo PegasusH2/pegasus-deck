@@ -1,0 +1,50 @@
+{
+  "protocol": 2,
+  "service": {
+    "name": "pegasus-deck",
+    "version": "0.2.0"
+  },
+  "windows": {
+    "booted": true,
+    "hostname": "PEGASUS-PC",
+    "uptimeSec": 3600
+  },
+  "session": {
+    "ready": true
+  },
+  "obs": {
+    "state": "ready",
+    "recording": false,
+    "recordingPaused": false,
+    "streaming": false,
+    "scene": "Juego",
+    "scenes": [
+      "Juego",
+      "Charla"
+    ],
+    "inputs": [
+      {
+        "name": "Mic/Aux",
+        "muted": false
+      }
+    ]
+  },
+  "apps": [
+    {
+      "id": "obs",
+      "name": "OBS Studio",
+      "state": "ready"
+    },
+    {
+      "id": "chrome",
+      "name": "Google Chrome",
+      "state": "installed"
+    }
+  ],
+  "appsDetection": "maybe",
+  "audio": {
+    "state": "ready",
+    "muted": false,
+    "volume": 40
+  }
+}

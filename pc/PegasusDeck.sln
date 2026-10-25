@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0B55B3BA-B348-412F-BDF1-6C83F200DD5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PegasusDeck.Core", "src\PegasusDeck.Core\PegasusDeck.Core.csproj", "{898B7308-FEBA-49E4-BAE0-6D460A6AA7CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PegasusDeck.Service", "src\PegasusDeck.Service\PegasusDeck.Service.csproj", "{25E0A248-8CD5-4218-85D5-2B5AEC0D189E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A12F39FF-24EA-46BD-92CE-0474BF6779C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PegasusDeck.Tests", "tests\PegasusDeck.Tests\PegasusDeck.Tests.csproj", "{0C222812-DCB3-4B09-8BFE-844F34CC126E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PegasusDeck.Agent", "src\PegasusDeck.Agent\PegasusDeck.Agent.csproj", "{95510A8B-5A45-47D4-BE25-4D72F84979AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{898B7308-FEBA-49E4-BAE0-6D460A6AA7CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{898B7308-FEBA-49E4-BAE0-6D460A6AA7CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{898B7308-FEBA-49E4-BAE0-6D460A6AA7CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{898B7308-FEBA-49E4-BAE0-6D460A6AA7CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25E0A248-8CD5-4218-85D5-2B5AEC0D189E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25E0A248-8CD5-4218-85D5-2B5AEC0D189E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25E0A248-8CD5-4218-85D5-2B5AEC0D189E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25E0A248-8CD5-4218-85D5-2B5AEC0D189E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C222812-DCB3-4B09-8BFE-844F34CC126E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C222812-DCB3-4B09-8BFE-844F34CC126E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C222812-DCB3-4B09-8BFE-844F34CC126E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C222812-DCB3-4B09-8BFE-844F34CC126E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95510A8B-5A45-47D4-BE25-4D72F84979AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95510A8B-5A45-47D4-BE25-4D72F84979AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95510A8B-5A45-47D4-BE25-4D72F84979AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95510A8B-5A45-47D4-BE25-4D72F84979AC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{898B7308-FEBA-49E4-BAE0-6D460A6AA7CF} = {0B55B3BA-B348-412F-BDF1-6C83F200DD5E}
+		{25E0A248-8CD5-4218-85D5-2B5AEC0D189E} = {0B55B3BA-B348-412F-BDF1-6C83F200DD5E}
+		{0C222812-DCB3-4B09-8BFE-844F34CC126E} = {A12F39FF-24EA-46BD-92CE-0474BF6779C3}
+		{95510A8B-5A45-47D4-BE25-4D72F84979AC} = {0B55B3BA-B348-412F-BDF1-6C83F200DD5E}
+	EndGlobalSection
+EndGlobal

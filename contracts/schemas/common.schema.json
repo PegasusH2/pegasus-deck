@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pegasus-deck.local/contracts/common.schema.json",
+  "title": "Tipos comunes",
+  "$defs": {
+    "protocol": { "const": 2 },
+    "errorCode": {
+      "enum": [
+        "AUTH_REQUIRED", "ORIGIN_FORBIDDEN", "HOST_FORBIDDEN", "RATE_LIMITED",
+        "PAIRING_INVALID", "BAD_JSON", "BAD_PARAMS", "UNKNOWN_ACTION",
+        "NO_SESSION", "OBS_NOT_READY", "APP_NOT_ALLOWED", "APP_NOT_FOUND",
+        "NOT_FOUND", "CONFLICT", "TIMEOUT", "BUSY", "INTERNAL", "CONFIRMATION_INVALID"
+      ]
+    },
+    "error": {
+      "type": "object",
+      "required": ["ok", "code", "message"],
+      "properties": {
+        "ok": { "const": false },
+        "code": { "$ref": "#/$defs/errorCode" },
+        "message": { "type": "string", "maxLength": 300 }
+      }
+    },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,39}$" },
+    "operationId": { "type": "string", "pattern": "^[a-f0-9]{16}$" }
+  }
+}

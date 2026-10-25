@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Contratos, validación, seguridad, protocolo del agente y almacenamiento compartidos por el servicio y el agente. -->
+  <PropertyGroup>
+    <!-- P/Invoke generado (LibraryImport) para identificar procesos al otro lado del pipe. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+</Project>

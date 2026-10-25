@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pegasus-deck.local/contracts/snapshot.schema.json",
+  "title": "Instantánea del sistema — solo por WebSocket tras autenticarse",
+  "description": "Lo envía el PC: admite campos nuevos (P-1); quien recibe ignora lo que no conoce. Quien envía respeta los límites (ADR-015).",
+  "type": "object",
+  "required": ["protocol", "service", "windows", "session", "obs", "apps", "appsDetection", "audio"],
+  "properties": {
+    "protocol": { "$ref": "common.schema.json#/$defs/protocol" },
+    "service": { "$ref": "health.schema.json#/$defs/service" },
+    "windows": {
+      "type": "object",
+      "required": ["booted", "hostname", "uptimeSec"],
+      "properties": {
+        "booted": { "type": "boolean" },
+        "hostname": { "type": "string", "maxLength": 63 },
+        "uptimeSec": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "session": {
+      "type": "object",
+      "required": ["ready"],
+      "properties": { "ready": { "type": "boolean" } }
+    },
+    "obs": {
+      "type": "object",
+      "required": ["state", "recording", "recordingPaused", "streaming", "scene", "scenes", "inputs"],
+      "properties": {
+        "state": { "enum": ["unavailable", "connecting", "ready", "auth_error", "incompatible"] },
+        "recording": { "type": "boolean" },
+        "recordingPaused": { "type": "boolean" },
+        "streaming": { "type": "boolean" },
+        "scene": { "type": ["string", "null"], "maxLength": 100 },
+        "scenes": { "type": "array", "maxItems": 200, "items": { "type": "string", "maxLength": 100 } },
+        "inputs": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object",
+            "required": ["name", "muted"],
+            "properties": {
+              "name": { "type": "string", "maxLength": 100 },
+              "muted": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "apps": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "state"],
+        "properties": {
+          "id": { "$ref": "common.schema.json#/$defs/id" },
+          "name": { "type": "string", "maxLength": 60 },
+          "state": { "enum": ["not_installed", "installed", "starting", "running", "ready"] },
+          "windows": { "description": "Ventanas abiertas que se pueden cerrar (ADR-024). Opcional.", "type": "integer", "minimum": 0, "maximum": 500 },
+          "kind": { "description": "game: instalada en una carpeta de juegos (Steam, Epic, Battle.net…), para su icono (ADR-027). Opcional.", "enum": ["game"] }
+        }
+      }
+    },
+    "appsDetection": {
+      "description": "ok: el agente informa del estado de las apps. unavailable: no se sabe (sin sesión o detección caída).",
+      "enum": ["ok", "unavailable"]
+    },
+    "audio": {
+      "description": "Salida de audio predeterminada de Windows (la gestiona el agente de sesión).",
+      "type": "object",
+      "required": ["state", "muted", "volume"],
+      "properties": {
+        "state": { "enum": ["ready", "unavailable"] },
+        "muted": { "type": "boolean" },
+        "volume": { "type": "integer", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "mic": {
+      "description": "Micrófono predeterminado de Windows (agente de sesión). Opcional (ADR-022): si falta, la PWA lo trata como no disponible.",
+      "type": "object",
+      "required": ["state", "muted"],
+      "properties": {
+        "state": { "enum": ["ready", "unavailable"] },
+        "muted": { "type": "boolean" }
+      }
+    },
+    "media": {
+      "description": "Reproducción multimedia de Windows (controles multimedia del sistema). none = ninguna app reproduciendo ni en pausa. Opcional (ADR-022).",
+      "type": "object",
+      "required": ["state"],
+      "properties": {
+        "state": { "enum": ["playing", "paused", "stopped", "none", "unavailable"] }
+      }
+    }
+  }
+}

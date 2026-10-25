@@ -1,0 +1,30 @@
+# Certificados y claves: son de cada PC. Nunca se suben (la clave privada permitiría suplantar al servicio).
+certs/
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+
+# Datos locales de desarrollo y pruebas (dispositivos emparejados, códigos, logs)
+.dev-data/
+pwa/test-results/
+pwa/playwright-report/
+*.log
+
+# Compilados y dependencias
+pwa/node_modules/
+pwa/dist/
+pc/**/bin/
+pc/**/obj/
+pc/install/out/
+*.csproj.user
+.vs/
+
+# Ajustes locales de Claude Code
+.claude/settings.local.json
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store

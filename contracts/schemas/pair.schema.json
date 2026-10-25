@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pegasus-deck.local/contracts/pair.schema.json",
+  "title": "POST /api/pair — sin autenticación, limitado por intentos",
+  "$defs": {
+    "request": {
+      "type": "object",
+      "required": ["code", "deviceName"],
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": "string", "pattern": "^[0-9]{6}$" },
+        "deviceName": {
+          "description": "Al menos un carácter visible; sin caracteres de control ni de formato (se muestra en la consola del PC).",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "pattern": "^(?=.*\\S)[^\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]+$"
+        }
+      }
+    },
+    "response": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["ok", "deviceId", "token"],
+          "properties": {
+            "ok": { "const": true },
+            "deviceId": { "type": "string", "pattern": "^[a-f0-9]{16}$" },
+            "token": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43,100}$" }
+          }
+        },
+        { "$ref": "common.schema.json#/$defs/error" }
+      ]
+    }
+  }
+}

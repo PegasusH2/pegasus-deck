@@ -1,0 +1,8 @@
+{
+  "type": "app.open",
+  "params": {
+    "appId": {
+      "path": "C:/x.exe"
+    }
+  }
+}

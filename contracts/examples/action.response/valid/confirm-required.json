@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "status": "confirm_required",
+  "confirmToken": "kZ3c9Qv7Lp2mXr8sT1uW4yB6nD0fG5hJ",
+  "expiresInSec": 15,
+  "message": "Confirma la acción."
+}

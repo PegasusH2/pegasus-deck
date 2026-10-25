@@ -1,0 +1,307 @@
+{
+  "$comment": "Lista blanca de acciones que ejecuta el PC (ejecutor 'service' de la PWA). Tipos de parámetro: 'id' = ^[a-z0-9][a-z0-9-]{0,39}$ · 'name' = 1-100 caracteres, no solo espacios, sin recortar · 'percent' = entero 0-100. timeoutMs = tiempo máximo hasta la confirmación. La comprueban pwa/tests/contract/actions.test.ts, pc/tests (CatalogoContratoTests) y el simulador la lee directamente. destructive = acción destructiva: el PC exige el segundo paso con confirmToken (ADR-024). 'resolveCommand' = id de contracts/resolve-commands.json (ADR-028).",
+  "windows.lock": {
+    "params": {},
+    "completion": "response",
+    "timeoutMs": 8000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "x": "y"
+      }
+    ]
+  },
+  "app.open": {
+    "params": {
+      "appId": "id"
+    },
+    "completion": "event",
+    "timeoutMs": 30000,
+    "valid": [
+      {
+        "appId": "obs"
+      },
+      {
+        "appId": "davinci-resolve"
+      }
+    ],
+    "invalid": [
+      {},
+      {
+        "appId": "C:/Windows/System32/cmd.exe"
+      },
+      {
+        "appId": "../cmd"
+      },
+      {
+        "appId": "OBS"
+      },
+      {
+        "appId": "obs",
+        "args": "/c calc"
+      },
+      {
+        "appId": 3
+      }
+    ]
+  },
+  "obs.recording.start": {
+    "params": {},
+    "completion": "event",
+    "timeoutMs": 10000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "force": true
+      }
+    ]
+  },
+  "obs.recording.stop": {
+    "params": {},
+    "completion": "event",
+    "timeoutMs": 15000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "force": true
+      }
+    ]
+  },
+  "obs.recording.pause": {
+    "params": {},
+    "completion": "event",
+    "timeoutMs": 10000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "x": 1
+      }
+    ]
+  },
+  "obs.streaming.start": {
+    "params": {},
+    "completion": "event",
+    "timeoutMs": 20000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "key": "abc"
+      }
+    ]
+  },
+  "obs.streaming.stop": {
+    "params": {},
+    "completion": "event",
+    "timeoutMs": 15000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "x": 1
+      }
+    ]
+  },
+  "obs.scene.set": {
+    "params": {
+      "scene": "name"
+    },
+    "completion": "event",
+    "timeoutMs": 5000,
+    "valid": [
+      {
+        "scene": "Juego"
+      },
+      {
+        "scene": "Juego "
+      }
+    ],
+    "invalid": [
+      {},
+      {
+        "scene": "   "
+      },
+      {
+        "scene": ""
+      },
+      {
+        "scene": true
+      },
+      {
+        "scene": "Juego",
+        "extra": "x"
+      }
+    ]
+  },
+  "obs.input.toggleMute": {
+    "params": {
+      "input": "name"
+    },
+    "completion": "event",
+    "timeoutMs": 5000,
+    "valid": [
+      {
+        "input": "Mic/Aux"
+      }
+    ],
+    "invalid": [
+      {},
+      {
+        "input": " "
+      },
+      {
+        "input": 1
+      }
+    ]
+  },
+  "audio.master.toggleMute": {
+    "params": {},
+    "completion": "response",
+    "timeoutMs": 5000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "mute": true
+      }
+    ]
+  },
+  "audio.master.setVolume": {
+    "params": {
+      "percent": "percent"
+    },
+    "completion": "response",
+    "timeoutMs": 5000,
+    "valid": [
+      {
+        "percent": 0
+      },
+      {
+        "percent": 55
+      },
+      {
+        "percent": 100
+      }
+    ],
+    "invalid": [
+      {},
+      {
+        "percent": 101
+      },
+      {
+        "percent": -1
+      },
+      {
+        "percent": 50.5
+      },
+      {
+        "percent": "50"
+      },
+      {
+        "percent": 50,
+        "x": 1
+      }
+    ]
+  },
+  "audio.mic.toggleMute": {
+    "params": {},
+    "completion": "response",
+    "timeoutMs": 5000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "x": 1
+      }
+    ]
+  },
+  "media.play": {
+    "params": {},
+    "completion": "response",
+    "timeoutMs": 5000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "x": 1
+      }
+    ]
+  },
+  "media.pause": {
+    "params": {},
+    "completion": "response",
+    "timeoutMs": 5000,
+    "valid": [
+      {}
+    ],
+    "invalid": [
+      {
+        "x": 1
+      }
+    ]
+  },
+  "app.closeAll": {
+    "params": {
+      "appId": "id"
+    },
+    "completion": "response",
+    "timeoutMs": 10000,
+    "destructive": true,
+    "valid": [
+      {
+        "appId": "explorer"
+      }
+    ],
+    "invalid": [
+      {},
+      {
+        "appId": "C:/Windows/explorer.exe"
+      },
+      {
+        "appId": "obs",
+        "x": 1
+      }
+    ]
+  },
+  "davinci.command": {
+    "params": {
+      "command": "resolveCommand"
+    },
+    "completion": "response",
+    "timeoutMs": 5000,
+    "valid": [
+      {
+        "command": "project.save"
+      },
+      {
+        "command": "color.addSerialNode"
+      }
+    ],
+    "invalid": [
+      {},
+      {
+        "command": "cmd /c calc"
+      },
+      {
+        "command": "Project.Save"
+      },
+      {
+        "command": "project.save",
+        "keys": "Alt+F4"
+      }
+    ]
+  }
+}

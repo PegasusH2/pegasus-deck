@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pegasus-deck.local/contracts/health.schema.json",
+  "title": "GET /api/health — sin autenticación y sin datos sensibles",
+  "type": "object",
+  "required": ["protocol", "service"],
+  "properties": {
+    "protocol": { "type": "integer", "minimum": 1 },
+    "service": { "$ref": "#/$defs/service" }
+  },
+  "$defs": {
+    "service": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "const": "pegasus-deck" },
+        "version": { "type": "string", "maxLength": 40 }
+      }
+    }
+  }
+}

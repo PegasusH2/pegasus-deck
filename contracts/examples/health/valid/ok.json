@@ -1,0 +1,7 @@
+{
+  "protocol": 2,
+  "service": {
+    "name": "pegasus-deck",
+    "version": "0.2.0"
+  }
+}

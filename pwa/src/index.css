@@ -1,0 +1,33 @@
+@import './ui/tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background: rgb(var(--pd-bg));
+  color: rgb(var(--pd-text));
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+button {
+  touch-action: manipulation; /* sin retardo de doble toque ni zoom */
+}
+
+input,
+select,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  font-size: 16px; /* evita el zoom automático de iOS al enfocar */
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--pd-info));
+  outline-offset: 2px;
+}

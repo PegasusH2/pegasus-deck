@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <AssemblyName>PegasusDeck.Service</AssemblyName>
+    <RootNamespace>PegasusDeck.Service</RootNamespace>
+    <!-- LibraryImport (apagado con InitiateShutdown, ADR-024). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PegasusDeck.Core\PegasusDeck.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Ejecutarse como servicio de Windows (paquete oficial de Microsoft). -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PegasusDeck.Tests" />
+  </ItemGroup>
+</Project>

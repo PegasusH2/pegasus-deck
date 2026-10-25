@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Agente de sesión: app de bandeja en la sesión del usuario (abrir/enfocar apps, bloquear, audio, OBS). -->
+  <PropertyGroup>
+    <!-- Controles multimedia de Windows (SMTC, WinRT): Windows 10 2004 o posterior (ADR-022). -->
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>PegasusDeck.Agent</AssemblyName>
+    <RootNamespace>PegasusDeck.Agent</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- El mismo logotipo que la PWA (pwa/public/icon-512.png). -->
+    <ApplicationIcon>Assets\pegasus.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\pegasus.ico" LogicalName="PegasusDeck.Agent.pegasus.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PegasusDeck.Core\PegasusDeck.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="PegasusDeck.Tests" />
+  </ItemGroup>
+</Project>

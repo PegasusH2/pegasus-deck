@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pegasus-deck.local/contracts/action.schema.json",
+  "title": "POST /api/actions — Authorization: Bearer <token>",
+  "$defs": {
+    "request": {
+      "type": "object",
+      "required": ["type", "params"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "pattern": "^[a-z]+(\\.[a-zA-Z]+)+$", "maxLength": 60 },
+        "confirmToken": {
+          "description": "Segundo paso de una acción destructiva (ADR-024): el token de la respuesta confirm_required.",
+          "type": "string", "pattern": "^[A-Za-z0-9_-]{20,64}$"
+        },
+        "params": {
+          "type": "object",
+          "maxProperties": 10,
+          "additionalProperties": {
+            "oneOf": [
+              { "type": "string", "maxLength": 200 },
+              { "type": "number" },
+              { "type": "boolean" }
+            ]
+          }
+        }
+      }
+    },
+    "response": {
+      "oneOf": [
+        {
+          "description": "La acción ha terminado.",
+          "type": "object",
+          "required": ["ok", "status", "message"],
+          "properties": {
+            "ok": { "const": true },
+            "status": { "const": "completed" },
+            "message": { "type": "string", "maxLength": 300 }
+          }
+        },
+        {
+          "description": "Aceptada: la confirmación llegará por WebSocket como mensaje 'operation'.",
+          "type": "object",
+          "required": ["ok", "status", "operationId"],
+          "properties": {
+            "ok": { "const": true },
+            "status": { "const": "accepted" },
+            "operationId": { "$ref": "common.schema.json#/$defs/operationId" },
+            "message": { "type": "string", "maxLength": 300 }
+          }
+        },
+        {
+          "description": "Acción destructiva (ADR-024): no se ha ejecutado. Repite la petición con este confirmToken (un solo uso, caduca en expiresInSec).",
+          "type": "object",
+          "required": ["ok", "status", "confirmToken", "expiresInSec", "message"],
+          "properties": {
+            "ok": { "const": true },
+            "status": { "const": "confirm_required" },
+            "confirmToken": { "type": "string", "pattern": "^[A-Za-z0-9_-]{20,64}$" },
+            "expiresInSec": { "type": "integer", "minimum": 1, "maximum": 60 },
+            "message": { "type": "string", "maxLength": 300 }
+          }
+        },
+        { "$ref": "common.schema.json#/$defs/error" }
+      ]
+    }
+  }
+}

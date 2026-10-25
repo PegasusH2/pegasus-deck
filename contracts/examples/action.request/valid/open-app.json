@@ -1,0 +1,6 @@
+{
+  "type": "app.open",
+  "params": {
+    "appId": "obs"
+  }
+}

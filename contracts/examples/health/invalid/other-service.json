@@ -1,0 +1,7 @@
+{
+  "protocol": 2,
+  "service": {
+    "name": "nginx",
+    "version": "1"
+  }
+}

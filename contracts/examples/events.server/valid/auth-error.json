@@ -1,0 +1,5 @@
+{
+  "type": "error",
+  "code": "AUTH_REQUIRED",
+  "message": "Token no válido o revocado."
+}

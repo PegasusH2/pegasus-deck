@@ -1,0 +1,58 @@
+/*
+ * Tokens del sistema de diseño de Pegasus Deck (fuente única).
+ * Colores como canales RGB para poder usar opacidad en Tailwind: rgb(var(--pd-x) / 0.5).
+ * La paleta de botones tiene contraste ≥ 4.5:1 con texto blanco (lo comprueba tests/unit/designTokens.test.ts).
+ */
+:root {
+  /* Fondo y superficies */
+  --pd-bg: 5 9 19;            /* #050913 */
+  --pd-surface-1: 13 21 40;   /* #0d1528 */
+  --pd-surface-2: 19 30 56;   /* #131e38 */
+  --pd-surface-3: 27 40 71;   /* #1b2847 */
+  --pd-border: 255 255 255;   /* usar con /0.10 */
+
+  /* Texto */
+  --pd-text: 241 245 249;     /* #f1f5f9 */
+  --pd-text-2: 148 163 184;   /* #94a3b8 */
+  --pd-text-3: 100 116 139;   /* #64748b */
+
+  /* Semánticos */
+  --pd-ok: 34 197 94;         /* #22c55e activo / confirmado */
+  --pd-danger: 239 68 68;     /* #ef4444 parar / error */
+  --pd-warn: 245 158 11;      /* #f59e0b esperando */
+  --pd-info: 59 130 246;      /* #3b82f6 navegación / acción */
+  --pd-accent: 139 92 246;    /* #8b5cf6 OBS / audio */
+
+  /* Paleta cerrada de botones */
+  --pd-tile-green: 21 128 61;    /* #15803d */
+  --pd-tile-red: 185 28 28;      /* #b91c1c */
+  --pd-tile-blue: 29 78 216;     /* #1d4ed8 */
+  --pd-tile-violet: 109 40 217;  /* #6d28d9 */
+  --pd-tile-purple: 126 34 206;  /* #7e22ce */
+  --pd-tile-teal: 15 118 110;    /* #0f766e */
+  --pd-tile-amber: 180 83 9;     /* #b45309 */
+  --pd-tile-slate: 51 65 85;     /* #334155 */
+  --pd-tile-pink: 190 24 93;     /* #be185d */
+  --pd-tile-cyan: 14 116 144;    /* #0e7490 */
+
+  /* Forma */
+  --pd-radius-sm: 8px;
+  --pd-radius-md: 12px;
+  --pd-radius-lg: 16px;
+  --pd-radius-xl: 20px;
+  --pd-shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 4px 12px rgb(0 0 0 / 0.25);
+
+  /* Movimiento */
+  --pd-dur-press: 120ms;
+  --pd-dur-panel: 200ms;
+
+  /* Cuadrícula */
+  --pd-grid-gap: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --pd-dur-press: 0ms;
+    --pd-dur-panel: 0ms;
+  }
+}

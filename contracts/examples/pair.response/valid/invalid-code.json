@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "code": "PAIRING_INVALID",
+  "message": "Código incorrecto o caducado."
+}

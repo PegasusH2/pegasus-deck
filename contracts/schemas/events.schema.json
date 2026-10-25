@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pegasus-deck.local/contracts/events.schema.json",
+  "title": "WebSocket /api/events",
+  "description": "El cliente envía 'auth' en los 3 s siguientes a abrir la conexión (nunca el token en la URL). El servidor responde 'ready' con la instantánea, o 'error' y cierra con código 4401. Después envía 'snapshot' ante cada cambio y como latido cada 5 s, y 'operation' al terminar una acción aceptada.",
+  "$defs": {
+    "client": {
+      "type": "object",
+      "required": ["type", "token"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "auth" },
+        "token": { "type": "string", "minLength": 1, "maxLength": 200 }
+      }
+    },
+    "server": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["type", "data"],
+          "properties": {
+            "type": { "enum": ["ready", "snapshot"] },
+            "data": { "$ref": "snapshot.schema.json" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "data"],
+          "properties": {
+            "type": { "const": "operation" },
+            "data": {
+              "type": "object",
+              "required": ["operationId", "status", "message"],
+              "properties": {
+                "operationId": { "$ref": "common.schema.json#/$defs/operationId" },
+                "status": { "enum": ["completed", "failed"] },
+                "code": { "$ref": "common.schema.json#/$defs/errorCode" },
+                "message": { "type": "string", "maxLength": 300 }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["type", "code", "message"],
+          "properties": {
+            "type": { "const": "error" },
+            "code": { "$ref": "common.schema.json#/$defs/errorCode" },
+            "message": { "type": "string", "maxLength": 300 }
+          }
+        }
+      ]
+    }
+  }
+}

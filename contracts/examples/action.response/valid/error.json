@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "code": "NO_SESSION",
+  "message": "No hay una sesión de Windows iniciada."
+}

@@ -1,0 +1,10 @@
+{
+  "health": "health.schema.json",
+  "pair.request": "pair.schema.json#/$defs/request",
+  "pair.response": "pair.schema.json#/$defs/response",
+  "snapshot": "snapshot.schema.json",
+  "action.request": "action.schema.json#/$defs/request",
+  "action.response": "action.schema.json#/$defs/response",
+  "events.client": "events.schema.json#/$defs/client",
+  "events.server": "events.schema.json#/$defs/server"
+}

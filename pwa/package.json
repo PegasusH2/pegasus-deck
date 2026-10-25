@@ -1,0 +1,44 @@
+{
+  "name": "pegasus-deck-pwa",
+  "version": "0.1.0",
+  "description": "Pegasus Deck: panel tipo Stream Deck para iPad que controla el PC con Windows",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:pwa": "vite",
+    "sim": "node sim/server.mjs",
+    "build": "tsc -p tsconfig.json && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:service": "playwright test -c playwright.service.config.ts",
+    "icons": "node scripts/make-icons.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "0.468.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "simple-icons": "16.34.0",
+    "zod": "3.23.8",
+    "zustand": "5.0.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.1",
+    "@types/node": "22.10.0",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@types/ws": "8.5.13",
+    "@vitejs/plugin-react": "4.3.4",
+    "ajv": "8.17.1",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.15",
+    "typescript": "5.7.2",
+    "vite": "6.0.3",
+    "vite-plugin-pwa": "0.21.1",
+    "vitest": "2.1.8",
+    "ws": "8.18.0"
+  }
+}

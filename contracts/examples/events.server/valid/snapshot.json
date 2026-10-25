@@ -1,0 +1,34 @@
+{
+  "type": "snapshot",
+  "data": {
+    "protocol": 2,
+    "service": {
+      "name": "pegasus-deck",
+      "version": "0.2.0"
+    },
+    "windows": {
+      "booted": true,
+      "hostname": "PEGASUS-PC",
+      "uptimeSec": 3600
+    },
+    "session": {
+      "ready": false
+    },
+    "obs": {
+      "state": "unavailable",
+      "recording": false,
+      "recordingPaused": false,
+      "streaming": false,
+      "scene": null,
+      "scenes": [],
+      "inputs": []
+    },
+    "apps": [],
+    "appsDetection": "unavailable",
+    "audio": {
+      "state": "unavailable",
+      "muted": false,
+      "volume": 0
+    }
+  }
+}

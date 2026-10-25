@@ -1,0 +1,7 @@
+{
+  "type": "app.closeAll",
+  "params": {
+    "appId": "chrome"
+  },
+  "confirmToken": "kZ3c9Qv7Lp2mXr8sT1uW4yB6nD0fG5hJ"
+}

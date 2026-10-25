@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <!-- Todo el lado PC es Windows (servicio, agente de sesión, ACL, named pipes). -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>12</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Version>0.2.0</Version>
+    <!-- Versiones exactas y reproducibles de los paquetes (ADR-009). -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- Seguridad: impide inyectar código con DOTNET_STARTUP_HOOKS en un ejecutable de confianza. -->
+    <StartupHookSupport>false</StartupHookSupport>
+  </PropertyGroup>
+</Project>
