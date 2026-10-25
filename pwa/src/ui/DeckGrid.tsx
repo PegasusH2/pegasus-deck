@@ -59,9 +59,10 @@ function ButtonTile({ button: original, consumeClick, onTap }: { button: DeckBut
   // Las apps abiertas no se marcan (ni punto ni borde verde): solo lo activo de verdad, como la escena de OBS.
   const marked = active && button.action.type !== 'app.open';
   const running = run === 'running';
+  const live = button.captionFact ? facts[button.captionFact] : null;
   const caption = running ? 'En curso…'
     : run === 'failed' && note ? note
-    : av.enabled ? button.caption
+    : av.enabled ? (typeof live === 'string' && live ? live : button.caption)
     : av.blockers[0] ?? (av.unknown.length ? 'Comprobando…' : 'No disponible');
   const reasons = av.enabled ? '' : (av.missing.length ? av.missing : av.unknown).join(', ');
 

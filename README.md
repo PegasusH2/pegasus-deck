@@ -3,7 +3,7 @@
 Panel tipo **Stream Deck** en un iPad que controla un PC con Windows, OBS y aplicaciones en la red local.
 El iPad usa una PWA (sin App Store); el PC ejecuta un servicio de Windows y un agente en la bandeja.
 
-- **General:** 18 casillas configurables (apps autorizadas, volumen deslizable, micrófono, silenciar, pausar/reanudar), arrastrar y soltar; triple toque cierra las ventanas de una app.
+- **General:** 18 casillas configurables (apps autorizadas, volumen deslizable, salida de audio, micrófono, silenciar, pausar/reanudar), arrastrar y soltar; triple toque cierra las ventanas de una app.
 - **OBS:** grabación, streaming, micrófono y botones con las escenas reales (obs-websocket 5).
 - **DaVinci Resolve:** secciones (Páginas, Edición, Color, Entrega, Photo) con los atajos de tu propio preset de teclado.
 - **Seguridad:** solo red local (HTTPS con CA propia), emparejamiento con código de 6 dígitos, lista blanca de acciones y apps, confirmación en dos pasos para lo destructivo. Nada se expone a Internet.

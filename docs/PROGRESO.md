@@ -1,6 +1,6 @@
 # Progreso de Pegasus Deck
 
-Última actualización: 2026-10-25 (cambiar la IP desde la bandeja, ADR-034). Fases según `ARQUITECTURA_AMPLIADA.md` §14.6.
+Última actualización: 2026-10-25 (salida de audio desde General, ADR-035). Fases según `ARQUITECTURA_AMPLIADA.md` §14.6.
 
 ## Resumen
 
@@ -11,6 +11,19 @@
 | 3 · Integración | **Terminada en software** (agente de sesión, pipe verificado, apps, bloqueo, audio, OBS, P-1…P-4, dos revisiones). **Pendiente físico:** ver lista abajo |
 | 4 · Personalización | No iniciada (el modelo de datos v2 ya está preparado) |
 | 5 · Pulido y validación | **Instalador hecho** (ADR-025), pendiente de ejecutarlo en el PC. Resto (revisión táctil, accesibilidad, rendimiento, seguridad, docs) sin empezar |
+
+---
+
+## Salida de audio desde General (ADR-035, 2026-10-25)
+
+| Comprobación | Resultado |
+|---|---|
+| Lectura real de las salidas de este PC (4 salidas, predeterminada: Razer Barracuda X) | OK (solo lectura) |
+| Cambio con confirmación leyendo Windows; salida desconectada o id no válido: nada cambia | OK (.NET con audio simulado) |
+| Botón con la salida actual, lista, cambio, cambios hechos en Windows y salida desconectada | OK (unitarias + E2E con simulador) |
+| Panel v9: «Salida de audio» en la primera casilla libre, nada se mueve | OK (unitarias) |
+| .NET **217/217** · unitarias **199/199** · E2E **27/27** · servicio real **3/3** | OK |
+| **Pendiente físico:** cambiar de verdad la salida desde el iPad (IPolicyConfig) | Pruébalo tú tras `update.ps1` |
 
 ---
 

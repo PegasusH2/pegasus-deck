@@ -18,7 +18,8 @@ public abstract record ActionOutcome
 
 /// <summary>Estado que informa el agente de sesión (sesión, OBS, apps, audio).</summary>
 public sealed record AgentState(
-    bool SessionReady, ObsInfo Obs, IReadOnlyList<AppInfo> Apps, string AppsDetection, AudioInfo Audio, MicInfo? Mic = null, MediaInfo? Media = null)
+    bool SessionReady, ObsInfo Obs, IReadOnlyList<AppInfo> Apps, string AppsDetection, AudioInfo Audio, MicInfo? Mic = null, MediaInfo? Media = null,
+    OutputsInfo? Outputs = null)
 {
     public static AgentState None { get; } = new(false, ObsInfo.Unavailable, [], Core.Contract.AppsDetection.Unavailable, AudioInfo.Unavailable);
 }
@@ -54,7 +55,8 @@ public sealed class SystemState(IAgentLink agent)
             a.SessionReady ? a.AppsDetection : AppsDetection.Unavailable,
             a.SessionReady ? a.Audio : AudioInfo.Unavailable,
             a.SessionReady ? a.Mic : MicInfo.Unavailable,
-            a.SessionReady ? a.Media : MediaInfo.Unavailable));
+            a.SessionReady ? a.Media : MediaInfo.Unavailable,
+            a.SessionReady ? a.Outputs : OutputsInfo.Unavailable));
     }
 
     private static string ReadVersion()

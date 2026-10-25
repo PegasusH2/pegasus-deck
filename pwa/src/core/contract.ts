@@ -77,6 +77,15 @@ export const snapshotSchema = tolerant({
   media: tolerant({
     state: z.enum(mediaStates),
   }).default({ state: 'unavailable' }),
+  /** ADR-035: salidas de audio activas y la predeterminada. Opcional: si falta, no disponible. */
+  outputs: tolerant({
+    state: z.enum(['ready', 'unavailable']),
+    devices: z.array(tolerant({
+      id: z.string().regex(/^[a-z0-9][a-z0-9-]{0,39}$/),
+      name: z.string().min(1).max(60),
+      default: z.boolean(),
+    })).max(16),
+  }).default({ state: 'unavailable', devices: [] }),
 });
 export type ServiceSnapshot = z.infer<typeof snapshotSchema>;
 export type ObsState = ServiceSnapshot['obs']['state'];

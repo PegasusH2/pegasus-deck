@@ -15,10 +15,11 @@ esta lista; el iPad nunca envía rutas ni comandos.
 ## Pestaña General (iPad)
 
 - Tiene 18 casillas configurables. **Mantén pulsada** una casilla para elegir qué muestra: una app autorizada, un control
-  del PC (micrófono, volumen, silenciar, pausar/reanudar) o nada.
+  del PC (micrófono, volumen, silenciar, pausar/reanudar, salida de audio) o nada.
 - **Arrastra** un botón a otra casilla para moverlo. El orden se guarda en el iPad.
 - **Triple toque** en una app: cierra todas sus ventanas, como con la X, después de pedir confirmación.
 - El volumen se ajusta con un deslizador.
+- **Salida de audio** muestra por dónde suena el PC. Tócala para ver las salidas conectadas (altavoces, cascos, monitor…) y elegir otra: cambia la salida predeterminada de Windows.
 
 Un botón que no se puede usar se queda en su sitio, deshabilitado y con el motivo (por ejemplo «PC no disponible» o
 «estado desconocido»). Pegasus Deck no enciende ni apaga el PC.

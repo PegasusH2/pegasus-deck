@@ -11,7 +11,7 @@ type Spec = { params: Record<string, 'id' | 'name' | 'percent' | 'resolveCommand
 const raw = JSON.parse(fs.readFileSync(path.join(CONTRACTS, 'actions.json'), 'utf8')) as Record<string, Spec | string>;
 const specs = Object.fromEntries(Object.entries(raw).filter(([k]) => !k.startsWith('$'))) as Record<string, Spec>;
 
-const KIND: Record<ParamKind, string> = { app: 'id', page: 'id', obsScene: 'name', obsInput: 'name', text: 'text', percent: 'percent', resolveCommand: 'resolveCommand' };
+const KIND: Record<ParamKind, string> = { app: 'id', page: 'id', output: 'id', obsScene: 'name', obsInput: 'name', text: 'text', percent: 'percent', resolveCommand: 'resolveCommand' };
 
 describe('contrato: lista blanca de acciones', () => {
   const service = listActions().filter((a) => a.executor === 'service');

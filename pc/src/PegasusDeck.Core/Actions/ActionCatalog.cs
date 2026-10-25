@@ -38,6 +38,7 @@ public static partial class ActionCatalog
         new("audio.master.toggleMute", ActionTarget.Agent, [], ActionCompletion.Response, 5000),
         new("audio.master.setVolume", ActionTarget.Agent, [new("percent", ParamKind.Percent)], ActionCompletion.Response, 5000),
         new("audio.mic.toggleMute", ActionTarget.Agent, [], ActionCompletion.Response, 5000),
+        new("audio.output.set", ActionTarget.Agent, [new("device", ParamKind.AppId)], ActionCompletion.Response, 5000),
         new("media.play", ActionTarget.Agent, [], ActionCompletion.Response, 5000),
         new("media.pause", ActionTarget.Agent, [], ActionCompletion.Response, 5000),
         new("app.closeAll", ActionTarget.Agent, [new("appId", ParamKind.AppId)], ActionCompletion.Response, 10000, Destructive: true),

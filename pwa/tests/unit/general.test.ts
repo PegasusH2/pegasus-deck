@@ -49,7 +49,7 @@ describe('General por defecto (v6)', () => {
     expect(g.grid).toEqual({ cols: 6, rows: 3 });
     expect(g.slots).toHaveLength(18);
     expect(g.editable).toBe(true);
-    expect(g.slots.slice(0, 6)).toEqual(['g-mic', 'g-volume', 'g-mute-pc', 'g-pause', null, null]);
+    expect(g.slots.slice(0, 6)).toEqual(['g-mic', 'g-volume', 'g-mute-pc', 'g-pause', 'g-output', null]);
     expect(g.slots.slice(6, 12)).toEqual(['g-app-6', 'g-app-7', 'g-app-8', 'g-app-9', null, null]);
     expect(g.slots.slice(6, 10).map((id) => btn(DEFAULT_DECK, id!).action.params.appId)).toEqual(['obs', 'chrome', 'davinci', 'explorer']);
     expect(btn(DEFAULT_DECK, 'g-volume').widget).toBe('slider');
@@ -98,7 +98,7 @@ describe('migración desde v2: solo General (y la pestaña nueva DaVinci)', () =
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.migrated).toBe(true);
-    expect(r.deck.schemaVersion).toBe(8);
+    expect(r.deck.schemaVersion).toBe(9);
     // Mismas páginas y mismo orden, más DaVinci.
     expect(r.deck.pages.map((p) => p.id).filter((id) => id !== 'davinci')).toEqual(before.pages.map((p) => p.id));
     for (const p of before.pages.filter((x) => !OWN.has(x.id))) {
@@ -112,7 +112,7 @@ describe('migración desde v2: solo General (y la pestaña nueva DaVinci)', () =
     if (!r.ok) throw new Error(r.error);
     const g = general(r.deck);
     expect(g.grid).toEqual({ cols: 6, rows: 3 });
-    expect(g.slots.slice(0, 6)).toEqual(['g-mic', 'g-volume', 'g-mute-pc', 'g-pause', null, null]);
+    expect(g.slots.slice(0, 6)).toEqual(['g-mic', 'g-volume', 'g-mute-pc', 'g-pause', 'g-output', null]);
     const obs = btn(r.deck, 'g-app-6');
     const old = DEFAULT_DECK_V2.buttons.find((b) => b.id === 'open-obs')!;
     expect({ ...obs, id: old.id }).toEqual(old);
@@ -231,7 +231,7 @@ describe('Sin encender ni apagar el PC (ADR-032)', () => {
     const r = migrateDeck(v7);
     if (!r.ok) throw new Error(r.error);
     expect(r.migrated).toBe(true);
-    expect(r.deck.schemaVersion).toBe(8);
+    expect(r.deck.schemaVersion).toBe(9);
     expect(r.deck.buttons.some((b) => b.id === 'g-wake')).toBe(false);
     expect(general(r.deck).slots[9]).toBeNull();
     const before = { ...g, slots: g.slots.map((x) => (x === 'g-wake' ? null : x)) };
@@ -357,5 +357,58 @@ describe('v6 → v7 (ADR-031): solo DaVinci y OBS', () => {
     const bad = structuredClone(DEFAULT_DECK);
     bad.pages.find((p) => p.id === 'davinci')!.sections![0].slots = ['d-save'];
     expect(deckSchema.safeParse(bad).success).toBe(false);
+  });
+});
+
+describe('Salida de audio (ADR-035)', () => {
+  const facts = (snap = snapshot()) => buildFacts({ pc: machine('PC_ONLINE'), link: link('READY'), snapshot: snap });
+
+  it('el botón muestra la salida actual y solo funciona si el PC informa de salidas', () => {
+    const b = btn(DEFAULT_DECK, 'g-output');
+    expect(b).toMatchObject({ name: 'Salida de audio', action: { type: 'local.audioOutputs' }, captionFact: 'audio.output' });
+    expect(facts()['audio.output']).toBe('Altavoces');
+    expect(buttonAvailability(b, facts()).enabled).toBe(true);
+    const none = facts(snapshot({ outputs: { state: 'unavailable', devices: [] } }));
+    expect(buttonAvailability(b, none).enabled).toBe(false);
+    expect(buttonAvailability(b, none).blockers[0]).toBe('Salidas de audio no disponibles');
+    expect(buttonAvailability(b, facts(snapshot({ session: false }))).enabled).toBe(false);
+  });
+
+  it('la acción solo admite ids opacos del PC', async () => {
+    const { validateParams } = await import('../../src/core/actions');
+    expect(validateParams('audio.output.set', { device: 'out-cascos' }).ok).toBe(true);
+    expect(validateParams('audio.output.set', { device: '{0.0.0.00000000}.{a1}' }).ok).toBe(false);
+    expect(validateParams('audio.output.set', { device: 'Altavoces' }).ok).toBe(false);
+  });
+
+  it('v8 → v9: se añade en la primera casilla libre de General sin mover nada; si no hay sitio, queda guardado', () => {
+    const v8 = structuredClone({ ...DEFAULT_DECK, schemaVersion: 8 }) as unknown as DeckConfig;
+    v8.buttons = v8.buttons.filter((b) => b.id !== 'g-output');
+    const g = general(v8);
+    g.slots = g.slots.map((x) => (x === 'g-output' ? null : x));
+    g.slots[3] = null; // casilla libre antes que la 4
+    const r = migrateDeck(structuredClone(v8));
+    if (!r.ok) throw new Error(r.error);
+    expect(r.deck.schemaVersion).toBe(9);
+    expect(general(r.deck).slots).toEqual(g.slots.map((x, i) => (i === 3 ? 'g-output' : x)));
+    for (const p of v8.pages.filter((x) => x.id !== 'general')) expect(r.deck.pages.find((x) => x.id === p.id)).toStrictEqual(p);
+
+    const full = structuredClone(v8);
+    general(full).slots = general(full).slots.map((x, i) => x ?? `g-app-${100 + i}`);
+    for (const id of general(full).slots) {
+      if (id!.startsWith('g-app-1')) full.buttons.push({ ...btn(DEFAULT_DECK, 'g-app-6'), id: id! });
+    }
+    const r2 = migrateDeck(full);
+    if (!r2.ok) throw new Error(r2.error);
+    expect(general(r2.deck).slots).toEqual(general(full).slots);
+    expect(btn(r2.deck, 'g-output')).toBeDefined();
+  });
+
+  it('se puede quitar y volver a poner con una pulsación larga, nunca duplicado', () => {
+    const without = assignGeneralSlot(DEFAULT_DECK, 4, null)!;
+    expect(general(without).slots[4]).toBeNull();
+    const back = assignGeneralSlot(without, 17, { control: 'g-output' })!;
+    expect(general(back).slots[17]).toBe('g-output');
+    expect(assignGeneralSlot(back, 16, { control: 'g-output' })).toBeNull();
   });
 });

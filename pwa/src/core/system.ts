@@ -37,6 +37,7 @@ export function buildFacts({ pc, link, snapshot }: SystemView): Facts {
   const audioReady = fromSnap((s) => s.session.ready && s.audio.state === 'ready');
   const micReady = fromSnap((s) => s.session.ready && s.mic.state === 'ready');
   const mediaReady = fromSnap((s) => s.session.ready && s.media.state !== 'unavailable');
+  const outputsReady = fromSnap((s) => s.session.ready && s.outputs.state === 'ready' && s.outputs.devices.length > 0);
   // P-4: sin detección de apps (sin sesión o detección caída) no se sabe su estado.
   const appsKnown = snap ? snap.session.ready && snap.appsDetection === 'ok' : false;
   const whenObs = (get: (s: ServiceSnapshot) => FactValue): FactValue => (obsReady === true ? get(snap!) : obsReady);
@@ -57,6 +58,9 @@ export function buildFacts({ pc, link, snapshot }: SystemView): Facts {
     'audio.ready': audioReady,
     'audio.muted': audioReady === true ? snap!.audio.muted : audioReady,
     'audio.volume': audioReady === true ? String(snap!.audio.volume) : null,
+    'outputs.ready': outputsReady,
+    /** Nombre de la salida predeterminada (se muestra en el botón «Salida de audio»). */
+    'audio.output': outputsReady === true ? snap!.outputs.devices.find((d) => d.default)?.name ?? null : null,
     'mic.ready': micReady,
     'mic.muted': micReady === true ? snap!.mic.muted : micReady,
     'media.ready': mediaReady,

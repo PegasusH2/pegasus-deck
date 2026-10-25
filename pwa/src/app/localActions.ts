@@ -25,6 +25,11 @@ export const LOCAL_HANDLERS: Record<string, LocalHandler> = {
     return { status: 'completed', message: '' };
   },
 
+  'local.audioOutputs': async () => {
+    useApp.getState().setOutputPickerOpen(true);
+    return { status: 'completed', message: '' };
+  },
+
   'local.settings': async () => {
     useApp.getState().setView('settings');
     return { status: 'completed', message: '' };

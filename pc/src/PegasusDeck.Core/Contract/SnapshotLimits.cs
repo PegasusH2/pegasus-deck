@@ -14,6 +14,7 @@ public static partial class SnapshotLimits
     public const int MaxName = 100;
     public const int MaxList = 200;
     public const int MaxApps = 100;
+    public const int MaxOutputs = 16;
 
     private static readonly HashSet<string> ObsStates = ["unavailable", "connecting", "ready", "auth_error", "incompatible"];
     private static readonly HashSet<string> AppStates = ["not_installed", "installed", "starting", "running", "ready"];
@@ -51,8 +52,19 @@ public static partial class SnapshotLimits
             : AudioInfo.Unavailable;
         var mic = s.Mic is { State: "ready" or "unavailable" } ? s.Mic : MicInfo.Unavailable;
         var media = s.Media?.State is { } m && MediaStates.Contains(m) ? s.Media : MediaInfo.Unavailable;
+        var outputs = s.Outputs is { State: "ready", Devices: not null }
+            ? s.Outputs with
+            {
+                Devices = s.Outputs.Devices
+                    .Where(d => d?.Id is not null && d.Name is not null && IdRegex().IsMatch(d.Id))
+                    .Select(d => d with { Name = d.Name.Length > 60 ? d.Name[..60] : d.Name })
+                    .Take(MaxOutputs)
+                    .ToList(),
+            }
+            : OutputsInfo.Unavailable;
         return s with
         {
+            Outputs = outputs,
             Mic = mic,
             Media = media,
             AppsDetection = s.AppsDetection is AppsDetection.Ok ? AppsDetection.Ok : AppsDetection.Unavailable,

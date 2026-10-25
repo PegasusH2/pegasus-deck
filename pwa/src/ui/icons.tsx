@@ -64,6 +64,7 @@ import {
   Square,
   Volume1,
   Volume2,
+  Speaker,
   VolumeX,
 } from 'lucide-react';
 
@@ -144,6 +145,7 @@ const ICONS: Record<string, IconComponent> = {
   home: House,
   grid: LayoutGrid,
   volume: Volume2,
+  speaker: Speaker,
   'volume-low': Volume1,
   'volume-off': VolumeX,
 };

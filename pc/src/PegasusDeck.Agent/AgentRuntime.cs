@@ -34,6 +34,7 @@ internal sealed class AgentRuntime : IAgentHandler, IDisposable
     private AudioInfo _audioState = AudioInfo.Unavailable;
     private MicInfo _micState = MicInfo.Unavailable;
     private MediaInfo _mediaState = MediaInfo.Unavailable;
+    private OutputsInfo _outputsState = OutputsInfo.Unavailable;
     private CancellationToken _ct;
 
     public AgentRuntime(AgentOptions options, IAudioController audio, Func<int?>? obsProcessId = null, IMediaController? media = null)
@@ -67,7 +68,7 @@ internal sealed class AgentRuntime : IAgentHandler, IDisposable
     {
         lock (_lock)
         {
-            return new AgentStateMessage(true, Obs.State, _apps, _appsOk ? AppsDetection.Ok : AppsDetection.Unavailable, _audioState, _micState, _mediaState);
+            return new AgentStateMessage(true, Obs.State, _apps, _appsOk ? AppsDetection.Ok : AppsDetection.Unavailable, _audioState, _micState, _mediaState, _outputsState);
         }
     }
 
@@ -124,6 +125,22 @@ internal sealed class AgentRuntime : IAgentHandler, IDisposable
                     // Se confirma leyendo el estado real, no por haber enviado la orden.
                     if (now.State != "ready" || now.Muted == mic.Muted) return AgentResult.Failed(id, ErrorCodes.Internal, "Windows no ha cambiado el micrófono.");
                     return AgentResult.Completed(id, now.Muted ? "Micrófono silenciado." : "Micrófono activado.");
+                }
+                case "audio.output.set":
+                {
+                    var device = (string)typed["device"];
+                    var target = _audio.ReadOutputs().Devices.FirstOrDefault(d => d.Id == device);
+                    if (target is null) return AgentResult.Failed(id, ErrorCodes.NotFound, "Esa salida de audio ya no está conectada.");
+                    if (target.Default)
+                    {
+                        Refresh();
+                        return AgentResult.Completed(id, $"Ya suena por {target.Name}.");
+                    }
+                    var problem = _audio.SetDefaultOutput(device);
+                    Refresh();
+                    return problem is null
+                        ? AgentResult.Completed(id, $"Ahora suena por {target.Name}.")
+                        : AgentResult.Failed(id, ErrorCodes.Internal, problem);
                 }
                 case "media.pause":
                     return await MediaAsync(id, ["playing"], "paused", "pausar", "Reproducción en pausa.", _media.PauseAsync, ct);
@@ -298,16 +315,18 @@ internal sealed class AgentRuntime : IAgentHandler, IDisposable
         var audio = _audio.Read();
         var mic = _audio.ReadMic();
         var media = _media.Read();
+        var outputs = _audio.ReadOutputs();
         List<AgentOperation> finished = [];
         bool changed;
         lock (_lock)
         {
-            changed = ok != _appsOk || !apps.SequenceEqual(_apps) || audio != _audioState || mic != _micState || media != _mediaState;
+            changed = ok != _appsOk || !apps.SequenceEqual(_apps) || audio != _audioState || mic != _micState || media != _mediaState || !OutputsInfo.Same(outputs, _outputsState);
             _appsOk = ok;
             _apps = apps;
             _audioState = audio;
             _micState = mic;
             _mediaState = media;
+            _outputsState = outputs;
             foreach (var w in _appWaiters.ToList())
             {
                 var info = apps.FirstOrDefault(a => a.Id == w.AppId);

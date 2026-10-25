@@ -86,6 +86,9 @@ function freshState(power = 'off') {
     apps: Object.fromEntries(APPS.map((a) => [a.id, a.id === 'explorer' ? 'ready' : 'installed'])),
     audio: { muted: false, volume: 40 },
     mic: { muted: false },
+    // ADR-035: salidas de audio activas (ids opacos, como los del agente) y la predeterminada.
+    outputs: [{ id: 'out-altavoces', name: 'Altavoces (Realtek)' }, { id: 'out-cascos', name: 'Auriculares USB' }, { id: 'out-hdmi', name: 'Monitor HDMI' }],
+    defaultOutput: 'out-altavoces',
     media: 'playing', // playing | paused | stopped | none (ADR-022)
     windows: { explorer: 0 },
     resolveCommands: [], // órdenes recibidas para DaVinci Resolve (para las pruebas) // ventanas del Explorador abiertas (ADR-024); el resto: 1 si está abierta
@@ -164,6 +167,9 @@ function snapshot() {
     audio: session && !behaviour.audioUnavailable ? { state: 'ready', ...state.audio } : { state: 'unavailable', muted: false, volume: 0 },
     mic: session && !behaviour.micUnavailable ? { state: 'ready', ...state.mic } : { state: 'unavailable', muted: false },
     media: { state: session ? state.media : 'unavailable' },
+    outputs: session && !behaviour.audioUnavailable
+      ? { state: 'ready', devices: state.outputs.map((o) => ({ ...o, default: o.id === state.defaultOutput })) }
+      : { state: 'unavailable', devices: [] },
   };
 }
 
@@ -323,6 +329,14 @@ const ACTIONS = {
     state.mic.muted = !state.mic.muted;
     return { status: 'completed', message: state.mic.muted ? 'Micrófono silenciado.' : 'Micrófono activado.' };
   },
+  'audio.output.set': (p) => {
+    noExtraParams(p, ['device']);
+    requireAudio();
+    const target = state.outputs.find((o) => o.id === p.device);
+    if (!target) throw new ActionError(404, 'NOT_FOUND', 'Esa salida de audio ya no está conectada.');
+    state.defaultOutput = target.id;
+    return { status: 'completed', message: `Ahora suena por ${target.name}.` };
+  },
   'media.pause': (p) => {
     noExtraParams(p, []);
     requireMedia(['playing'], 'pausar');
@@ -453,6 +467,9 @@ const CONTROL = {
   obsScene: (b) => { if (state.obs.scenes.includes(b.value)) state.obs.scene = b.value; },
   obsScenes: (b) => { if (Array.isArray(b.value) && b.value.every((x) => typeof x === 'string')) { state.obs.scenes = b.value; if (!b.value.includes(state.obs.scene)) state.obs.scene = b.value[0] ?? null; } },
   media: (b) => { if (['playing', 'paused', 'stopped', 'none'].includes(b.value)) state.media = b.value; },
+  // Salida predeterminada cambiada en Windows (sin el iPad), o una salida que se desconecta (ADR-035).
+  defaultOutput: (b) => { if (state.outputs.some((o) => o.id === b.value)) state.defaultOutput = b.value; },
+  unplugOutput: (b) => { state.outputs = state.outputs.filter((o) => o.id !== b.value); if (state.defaultOutput === b.value) state.defaultOutput = state.outputs[0]?.id ?? null; },
   explorerWindows: (b) => { if (state.session && Number.isInteger(b.value) && b.value >= 0) state.windows.explorer = b.value; },
 };
 

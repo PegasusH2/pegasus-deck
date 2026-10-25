@@ -84,6 +84,28 @@
         "muted": { "type": "boolean" }
       }
     },
+    "outputs": {
+      "description": "Salidas de audio activas de Windows y cuál es la predeterminada (ADR-035). Opcional: si falta, la PWA la trata como no disponible. El id es opaco (hash del identificador de Windows).",
+      "type": "object",
+      "required": ["state", "devices"],
+      "properties": {
+        "state": { "enum": ["ready", "unavailable"] },
+        "devices": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "default"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,39}$" },
+              "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+              "default": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
     "media": {
       "description": "Reproducción multimedia de Windows (controles multimedia del sistema). none = ninguna app reproduciendo ni en pausa. Opcional (ADR-022).",
       "type": "object",

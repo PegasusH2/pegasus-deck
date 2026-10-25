@@ -423,3 +423,21 @@ los paquetes. La orden elevada devuelve el motivo exacto a la ventana (`--result
 Safari, añadirla a la pantalla de inicio y emparejar. Sin la CA de mkcert en el PC no se puede crear el certificado
 (se avisa y no se cambia nada). Reservar la IP en el router sigue siendo lo recomendable para no tener que cambiarla.
 
+## ADR-035 · Cambiar la salida de audio desde General — Aceptada (2026-10-25)
+
+**Contexto.** El usuario quiere elegir desde el iPad por dónde suena el PC (altavoces, cascos, monitor…).
+
+**Decisión.**
+- El agente informa en la instantánea (`outputs`, opcional) de las salidas activas con su nombre de Windows y cuál es la
+  predeterminada. El id es **opaco**: `out-` + 12 hex del SHA-256 del identificador de Windows; el iPad nunca ve ni envía
+  el identificador real.
+- Acción `audio.output.set` (`device`: id) en la lista blanca de la PWA, el servicio, el agente y el simulador. El agente
+  solo acepta una salida de las que tiene ahora, la hace predeterminada para los tres roles (consola, multimedia,
+  comunicaciones) y **confirma leyendo la predeterminada real**; si Windows no la cambia, lo dice.
+- Windows no tiene API pública para cambiar la salida predeterminada: se usa `IPolicyConfig`, la interfaz no documentada
+  que usa el propio panel de Sonido (Windows 7–11). Si una actualización de Windows la cambiara, la acción fallaría con
+  motivo, sin efectos colaterales.
+- PWA: control de General **«Salida de audio»** (`g-output`, acción local que abre la lista). El texto pequeño muestra la
+  salida actual (`captionFact: 'audio.output'`). Se coloca y se quita con una pulsación larga como los demás controles.
+- Panel **v9**: se añade en la primera casilla libre de General; si no hay, queda guardado. Nada se mueve.
+

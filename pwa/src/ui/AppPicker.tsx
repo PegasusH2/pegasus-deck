@@ -4,7 +4,7 @@
 
 import { Check } from 'lucide-react';
 import { appIconName } from '../core/appIcons';
-import { assignGeneralSlot, GENERAL_CONTROL_IDS, GENERAL_NATIVE_BUTTONS, GENERAL_PAGE_ID, type SlotChoice } from '../core/deck';
+import { assignGeneralSlot, GENERAL_CONTROL_BUTTONS, GENERAL_CONTROL_IDS, GENERAL_PAGE_ID, type SlotChoice } from '../core/deck';
 import { useApp } from '../app/store';
 import { iconFor } from './icons';
 import { Button, Sheet } from './kit';
@@ -33,7 +33,7 @@ export function AppPickerSheet() {
   // Controles del PC que no están ya en la página (nunca se duplican).
   const controls = GENERAL_CONTROL_IDS
     .filter((id) => !page?.slots.includes(id))
-    .map((id) => deck.buttons.find((b) => b.id === id) ?? GENERAL_NATIVE_BUTTONS.find((b) => b.id === id))
+    .map((id) => deck.buttons.find((b) => b.id === id) ?? GENERAL_CONTROL_BUTTONS.find((b) => b.id === id))
     .filter((b) => b !== undefined);
 
   // Sin avisos (ADR-029): el cambio se ve en la propia casilla.

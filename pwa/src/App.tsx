@@ -5,6 +5,7 @@ import { NotPaired, useNeedsPairing } from './ui/NotPaired';
 import { AppPickerSheet } from './ui/AppPicker';
 import { ConfirmDialog, Toasts } from './ui/Overlays';
 import { PairingDialog } from './ui/PairingDialog';
+import { OutputPickerSheet } from './ui/OutputPicker';
 import { SectionPickerSheet } from './ui/SectionPicker';
 import { SettingsView } from './ui/SettingsView';
 import { StatusBanner } from './ui/StatusBanner';
@@ -35,6 +36,7 @@ export function App() {
       <PairingDialog />
       <AppPickerSheet />
       <SectionPickerSheet />
+      <OutputPickerSheet />
       <ConfirmDialog />
       <Toasts />
     </div>

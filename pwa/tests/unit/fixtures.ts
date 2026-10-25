@@ -19,6 +19,7 @@ export function snapshot(patch: {
   audio?: Partial<ServiceSnapshot['audio']>;
   mic?: Partial<ServiceSnapshot['mic']>;
   media?: ServiceSnapshot['media']['state'];
+  outputs?: ServiceSnapshot['outputs'];
 } = {}): ServiceSnapshot {
   const apps = { obs: 'installed', chrome: 'installed', davinci: 'installed', explorer: 'installed', ...patch.apps } as Record<string, AppState>;
   return {
@@ -35,5 +36,9 @@ export function snapshot(patch: {
     audio: { state: 'ready', muted: false, volume: 40, ...patch.audio },
     mic: { state: 'ready', muted: false, ...patch.mic },
     media: { state: patch.media ?? 'playing' },
+    outputs: patch.outputs ?? { state: 'ready', devices: [
+      { id: 'out-altavoces', name: 'Altavoces', default: true },
+      { id: 'out-cascos', name: 'Auriculares USB', default: false },
+    ] },
   };
 }

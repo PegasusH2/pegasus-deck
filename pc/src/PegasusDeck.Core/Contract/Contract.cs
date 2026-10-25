@@ -121,6 +121,19 @@ public sealed record MicInfo(string State, bool Muted)
     public static MicInfo Unavailable { get; } = new("unavailable", false);
 }
 
+/// <summary>Una salida de audio activa (ADR-035). Id: opaco y estable (hash del identificador de Windows).</summary>
+public sealed record OutputDevice(string Id, string Name, bool Default);
+
+/// <summary>Salidas de audio activas de Windows y cuál es la predeterminada (ADR-035). State: ready | unavailable.</summary>
+public sealed record OutputsInfo(string State, IReadOnlyList<OutputDevice> Devices)
+{
+    public static OutputsInfo Unavailable { get; } = new("unavailable", []);
+
+    /// <summary>Igualdad por contenido (los records comparan las listas por referencia).</summary>
+    public static bool Same(OutputsInfo? a, OutputsInfo? b) =>
+        a is null || b is null ? a == b : a.State == b.State && a.Devices.SequenceEqual(b.Devices);
+}
+
 /// <summary>Reproducción multimedia de Windows (ADR-022). State: playing | paused | stopped | none | unavailable.</summary>
 public sealed record MediaInfo(string State)
 {
@@ -143,7 +156,8 @@ public sealed record Snapshot(
     string AppsDetection,
     AudioInfo Audio,
     MicInfo? Mic = null,
-    MediaInfo? Media = null);
+    MediaInfo? Media = null,
+    OutputsInfo? Outputs = null);
 
 // --- Mensajes del WebSocket (servidor → cliente) --------------------------------
 

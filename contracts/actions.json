@@ -227,6 +227,31 @@
       }
     ]
   },
+  "audio.output.set": {
+    "params": {
+      "device": "id"
+    },
+    "completion": "response",
+    "timeoutMs": 5000,
+    "valid": [
+      {
+        "device": "out-3f2a9c01b7d4"
+      }
+    ],
+    "invalid": [
+      {},
+      {
+        "device": "{0.0.0.00000000}.{a1b2}"
+      },
+      {
+        "device": "Altavoces"
+      },
+      {
+        "device": "out-1",
+        "x": 1
+      }
+    ]
+  },
   "media.play": {
     "params": {},
     "completion": "response",

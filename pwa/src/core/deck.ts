@@ -8,7 +8,7 @@ import { getAction, validateParams } from './actions';
 import { appIconName } from './appIcons';
 import type { Facts } from './system';
 
-export const DECK_SCHEMA_VERSION = 8;
+export const DECK_SCHEMA_VERSION = 9;
 
 export const PALETTE = ['green', 'red', 'blue', 'violet', 'purple', 'teal', 'amber', 'slate', 'pink', 'cyan'] as const;
 export type ButtonColor = (typeof PALETTE)[number];
@@ -48,6 +48,8 @@ export const buttonSchema = z.object({
   caption: z.string().max(24),
   /** v3: control especial en lugar de botón. 'slider' = deslizador de volumen (solo audio.master.setVolume). */
   widget: z.enum(['slider']).optional(),
+  /** ADR-035: texto pequeño = valor de este hecho (p. ej. la salida de audio actual) cuando hay valor. */
+  captionFact: z.enum(['audio.output']).optional(),
   /**
    * v4 (ADR-024): mientras se cumple `when`, el botón muestra y hace esto otro (p. ej. «Encender PC»
    * pasa a «Apagar PC» con el PC encendido). Excepción expresa a «un botón no cambia de significado»:
@@ -400,7 +402,16 @@ export const RESUME: NonNullable<DeckButton['alternate']> = {
 };
 
 /** Controles del PC que se pueden poner en cualquier casilla de General (pulsación larga). */
-export const GENERAL_CONTROL_IDS: readonly string[] = ['g-mic', 'g-volume', 'g-mute-pc', 'g-pause'];
+export const GENERAL_CONTROL_IDS: readonly string[] = ['g-mic', 'g-volume', 'g-mute-pc', 'g-pause', 'g-output'];
+
+/** ADR-035: «Salida de audio» abre la lista de salidas del PC; muestra la actual. */
+export const OUTPUT_BUTTON: DeckButton = newButton({
+  id: 'g-output', name: 'Salida de audio', icon: 'speaker', color: 'teal', action: { type: 'local.audioOutputs', params: {} },
+  caption: 'Audio de Windows', captionFact: 'audio.output',
+});
+
+/** Controles del PC que se pueden poner en General (la v3 solo colocaba los nativos). */
+export const GENERAL_CONTROL_BUTTONS: readonly DeckButton[] = [...GENERAL_NATIVE_BUTTONS, OUTPUT_BUTTON];
 
 export const DAVINCI_PAGE_ID = 'davinci';
 
@@ -579,8 +590,25 @@ export function removeRetiredActions(raw: unknown): unknown {
   return { ...raw, pages, buttons };
 }
 
+/**
+ * v8 → v9 (ADR-035): se añade «Salida de audio» a General en la primera casilla libre (si hay; si no, queda
+ * guardado y se puede poner con una pulsación larga). Nada se mueve.
+ */
+export function upgradeV9(deck: DeckBody): DeckBody {
+  if (deck.buttons.some((b) => b.id === OUTPUT_BUTTON.id)) return deck;
+  const buttons = [...deck.buttons, OUTPUT_BUTTON];
+  const gi = deck.pages.findIndex((p) => p.id === GENERAL_PAGE_ID);
+  if (gi < 0) return { ...deck, buttons };
+  const g = deck.pages[gi];
+  const free = g.slots.findIndex((x, i) => x === null && isConfigurableSlot(g, i));
+  if (free < 0) return { ...deck, buttons };
+  const pages = [...deck.pages];
+  pages[gi] = { ...g, slots: g.slots.map((x, i) => (i === free ? OUTPUT_BUTTON.id : x)) };
+  return { pages, buttons };
+}
+
 const v5 = upgradeGeneral(DEFAULT_DECK_V2);
-export const DEFAULT_DECK: DeckConfig = { schemaVersion: DECK_SCHEMA_VERSION, ...upgradeV7(upgradeV6({ ...v5, buttons: upgradePowerButton(v5.buttons) })) };
+export const DEFAULT_DECK: DeckConfig = { schemaVersion: DECK_SCHEMA_VERSION, ...upgradeV9(upgradeV7(upgradeV6({ ...v5, buttons: upgradePowerButton(v5.buttons) }))) };
 
 /** ¿Se puede configurar esta casilla de esta página? */
 export function isConfigurableSlot(page: DeckPage, slot: number): boolean {
@@ -611,7 +639,7 @@ export function assignGeneralSlot(deck: DeckConfig, slot: number, choice: SlotCh
   } else if ('control' in choice) {
     if (!GENERAL_CONTROL_IDS.includes(choice.control) || slots.includes(choice.control)) return null;
     if (!buttons.some((b) => b.id === choice.control)) {
-      const control = GENERAL_NATIVE_BUTTONS.find((b) => b.id === choice.control);
+      const control = GENERAL_CONTROL_BUTTONS.find((b) => b.id === choice.control);
       if (!control) return null;
       buttons.push(choice.control === 'g-pause' ? { ...control, alternate: RESUME } : control);
     }

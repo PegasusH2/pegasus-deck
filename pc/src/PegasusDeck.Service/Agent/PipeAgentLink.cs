@@ -252,8 +252,8 @@ public sealed class PipeAgentLink(
                 }
                 // Se normaliza ya aquí: el estado guardado siempre cumple el contrato.
                 var clean = SnapshotLimits.Clamp(new Snapshot(Protocol.Version, new ServiceInfo(Protocol.ServiceName, "0"),
-                    new WindowsInfo(true, "", 0), new SessionInfo(s.SessionReady), s.Obs, s.Apps, s.AppsDetection, s.Audio, s.Mic, s.Media));
-                _state = new AgentState(s.SessionReady, clean.Obs, clean.Apps, clean.AppsDetection, clean.Audio, clean.Mic, clean.Media);
+                    new WindowsInfo(true, "", 0), new SessionInfo(s.SessionReady), s.Obs, s.Apps, s.AppsDetection, s.Audio, s.Mic, s.Media, s.Outputs));
+                _state = new AgentState(s.SessionReady, clean.Obs, clean.Apps, clean.AppsDetection, clean.Audio, clean.Mic, clean.Media, clean.Outputs);
                 events.SnapshotChanged();
                 return true;
             case "result":

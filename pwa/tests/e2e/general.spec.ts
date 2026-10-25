@@ -10,7 +10,7 @@ test.describe.configure({ mode: 'serial' });
 
 // OBS muestra ahora las escenas reales (ADR-031): se comprueba aparte.
 const OTHER_PAGES = DEFAULT_DECK_V2.pages.filter((p) => p.id !== 'general' && p.id !== 'obs');
-const GENERAL_IDS = ['g-mic', 'g-volume', 'g-mute-pc', 'g-pause', 'g-app-6', 'g-app-7', 'g-app-8', 'g-app-9'];
+const GENERAL_IDS = ['g-mic', 'g-volume', 'g-mute-pc', 'g-pause', 'g-output', 'g-app-6', 'g-app-7', 'g-app-8', 'g-app-9'];
 
 async function simState(): Promise<{ power: string; audio: { volume: number; muted: boolean }; mic: { muted: boolean }; media: string; windows: { explorer: number }; apps: Record<string, string>; resolveCommands: string[] }> {
   return (await fetch(`http://127.0.0.1:${SIM_PORT}/__sim/state`)).json();
@@ -313,6 +313,30 @@ test('Apps abiertas sin bola ni borde verde; la escena activa de OBS sí se marc
   const scene = inSlot(page, 6); // las escenas son el propio botón (sin casilla editable)
   await expect(scene).toHaveAttribute('data-active', 'true');
   await expect(scene).toHaveClass(/ring-ok/);
+});
+
+test('Salida de audio: lista las del PC, cambia la predeterminada y refleja cambios hechos en Windows', async ({ page }) => {
+  await sim('reset', { power: 'on' });
+  await openPaired(page);
+  const output = button(page, 'g-output');
+  await expect(output).toContainText('Altavoces (Realtek)');
+
+  await output.click();
+  const sheet = page.getByRole('dialog', { name: 'Salida de audio' });
+  const list = sheet.getByRole('list', { name: 'Salidas de audio' }).getByRole('button');
+  await expect(list).toHaveCount(3);
+  await expect(sheet.getByRole('button', { name: 'Altavoces (Realtek)' })).toHaveAttribute('aria-pressed', 'true');
+  await sheet.getByRole('button', { name: 'Auriculares USB' }).click();
+  await expect(sheet).toHaveCount(0);
+  await expect.poll(async () => (await simState() as unknown as { defaultOutput: string }).defaultOutput).toBe('out-cascos');
+  await expect(output).toContainText('Auriculares USB');
+
+  // Cambiada en Windows (sin el iPad) o desconectada: el botón lo refleja solo.
+  await sim('defaultOutput', { value: 'out-hdmi' });
+  await expect(output).toContainText('Monitor HDMI');
+  await sim('unplugOutput', { value: 'out-hdmi' });
+  await expect(output).not.toContainText('Monitor HDMI');
+  await noToasts(page);
 });
 
 test('Triple toque en una app: dice cuántas ventanas se cierran y las cierra; un toque sigue abriendo', async ({ page }) => {

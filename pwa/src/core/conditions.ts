@@ -45,6 +45,7 @@ const FACT_TEXT: Record<string, [string, string]> = {
   'obs.streaming': ['Streaming activo', 'Streaming no iniciado'],
   'audio.ready': ['Audio de Windows disponible', 'Audio de Windows no disponible'],
   'audio.muted': ['Audio silenciado', 'Audio con sonido'],
+  'outputs.ready': ['Salidas de audio disponibles', 'Salidas de audio no disponibles'],
   'mic.ready': ['Micrófono disponible', 'Micrófono no disponible'],
   'mic.muted': ['Micrófono silenciado', 'Micrófono activo'],
   'media.ready': ['Multimedia disponible', 'Multimedia no disponible'],

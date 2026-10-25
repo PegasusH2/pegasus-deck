@@ -77,7 +77,7 @@ describe('migraciones', () => {
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.migrated).toBe(true);
-    const own = r.deck.buttons.filter((b) => !b.id.startsWith('d-')); // sin la pestaña nueva DaVinci
+    const own = r.deck.buttons.filter((b) => !b.id.startsWith('d-') && b.id !== 'g-output'); // sin DaVinci ni «Salida de audio» (v9)
     expect(own.map((b) => b.color)).toEqual(['slate', 'slate']);
     expect(own[0].confirm).toEqual({ text: '¿Seguro?', verb: 'Confirmar' });
     expect(r.deck.pages[0].slots.slice(0, 3)).toEqual(['a', 'b', null]);

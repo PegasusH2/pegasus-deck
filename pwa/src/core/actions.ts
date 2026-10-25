@@ -16,7 +16,7 @@ export type ActionExecutor = 'pwa' | 'service';
 /** response: la respuesta HTTP es el resultado · event: hay que esperar el mensaje 'operation'. */
 export type ActionCompletion = 'response' | 'event';
 
-export type ParamKind = 'app' | 'obsScene' | 'obsInput' | 'page' | 'text' | 'percent' | 'resolveCommand';
+export type ParamKind = 'app' | 'obsScene' | 'obsInput' | 'page' | 'text' | 'percent' | 'resolveCommand' | 'output';
 
 export interface ParamField {
   key: string;
@@ -48,12 +48,15 @@ const OBS: Condition = { all: [{ fact: 'pc.online' }, { fact: 'service.ready' },
 const AUDIO: Condition = { all: [SESSION, { fact: 'audio.ready' }] };
 const MIC: Condition = { all: [SESSION, { fact: 'mic.ready' }] };
 const MEDIA: Condition = { all: [SESSION, { fact: 'media.ready' }] };
+const OUTPUTS: Condition = { all: [SESSION, { fact: 'outputs.ready' }] };
 
 const ID_RE = /^[a-z0-9][a-z0-9-]{0,39}$/;
 
 const FIELD_SCHEMA: Record<ParamKind, z.ZodTypeAny> = {
   app: z.string().regex(ID_RE, 'Identificador de aplicación no válido'),
   page: z.string().regex(ID_RE, 'Identificador de página no válido'),
+  // ADR-035: id opaco que da el PC; nunca el identificador de Windows.
+  output: z.string().regex(ID_RE, 'Salida de audio no válida'),
   // Sin trim(): se envía exactamente el nombre de OBS (puede tener espacios).
   obsScene: z.string().max(100).refine((s) => s.trim().length > 0, 'Indica la escena'),
   obsInput: z.string().max(100).refine((s) => s.trim().length > 0, 'Indica la fuente'),
@@ -116,6 +119,10 @@ const DEFINITIONS: ActionDefinition[] = [
   def({ type: 'audio.master.setVolume', label: 'Fijar el volumen del PC', category: 'system', executor: 'service',
     params: [{ key: 'percent', label: 'Volumen (%)', kind: 'percent' }], requires: AUDIO, timeoutMs: 5000, idempotent: true }),
   def({ type: 'audio.mic.toggleMute', label: 'Silenciar / activar el micrófono del PC', category: 'system', executor: 'service', requires: MIC, timeoutMs: 5000 }),
+  // ADR-035: elegir la salida de audio predeterminada de Windows (solo una de las que informa el PC).
+  def({ type: 'audio.output.set', label: 'Cambiar salida de audio', category: 'system', executor: 'service',
+    params: [{ key: 'device', label: 'Salida', kind: 'output' }], requires: OUTPUTS, timeoutMs: 5000, idempotent: true }),
+  def({ type: 'local.audioOutputs', label: 'Elegir salida de audio', category: 'local', executor: 'pwa', requires: OUTPUTS, idempotent: true }),
 
   // Multimedia de Windows (ADR-022): pausa/reanuda lo que suene en el PC, con estado real
   def({ type: 'media.pause', label: 'Pausar la reproducción del PC', category: 'system', executor: 'service',

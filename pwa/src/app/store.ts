@@ -67,6 +67,8 @@ interface AppState {
   activeSections: Record<string, string>;
   /** Página cuya lista de secciones está abierta. */
   sectionPickerPage: string | null;
+  /** ADR-035: lista de salidas de audio abierta. */
+  outputPickerOpen: boolean;
 
   hydrate: (data: { settings: PcSettings; deck: DeckConfig; activePageId?: string; device: DeviceCredentials | null; activeSections?: Record<string, string> }) => void;
   setSettings: (settings: PcSettings) => void;
@@ -74,6 +76,7 @@ interface AppState {
   setAppPickerSlot: (slot: number | null) => void;
   setActiveSection: (pageId: string, sectionId: string) => void;
   setSectionPickerPage: (pageId: string | null) => void;
+  setOutputPickerOpen: (open: boolean) => void;
   setActivePage: (id: string) => void;
   setDevice: (device: DeviceCredentials | null) => void;
   dispatchPc: (event: PcEvent) => void;
@@ -129,6 +132,7 @@ export const useApp = create<AppState>()((set, get) => {
     appPickerSlot: null,
     activeSections: {},
     sectionPickerPage: null,
+    outputPickerOpen: false,
 
     hydrate: ({ settings, deck, activePageId, device, activeSections }) => set({
       loaded: true,
@@ -144,6 +148,7 @@ export const useApp = create<AppState>()((set, get) => {
     setAppPickerSlot: (appPickerSlot) => set({ appPickerSlot }),
     setActiveSection: (pageId, sectionId) => set({ activeSections: { ...get().activeSections, [pageId]: sectionId } }),
     setSectionPickerPage: (sectionPickerPage) => set({ sectionPickerPage }),
+    setOutputPickerOpen: (outputPickerOpen) => set({ outputPickerOpen }),
     setActivePage: (activePageId) => set({ activePageId }),
     setDevice: (device) => set({ device }),
 

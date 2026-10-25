@@ -23,6 +23,18 @@ internal sealed class FakeAudio : IAudioController
     public bool MicMuted { get; set; }
     public MicInfo ReadMic() => new("ready", MicMuted);
     public void SetMicMute(bool mute) => MicMuted = mute;
+
+    /// <summary>Salidas simuladas (ADR-035). Ignores = Windows acepta la orden pero no cambia nada.</summary>
+    public List<(string Id, string Name)> Outputs { get; } = [("out-altavoces", "Altavoces"), ("out-cascos", "Auriculares USB")];
+    public string DefaultOutput { get; set; } = "out-altavoces";
+    public bool Ignores { get; set; }
+    public OutputsInfo ReadOutputs() => new("ready", [.. Outputs.Select(o => new OutputDevice(o.Id, o.Name, o.Id == DefaultOutput))]);
+    public string? SetDefaultOutput(string id)
+    {
+        if (!Outputs.Any(o => o.Id == id)) return "Esa salida de audio ya no está conectada.";
+        if (!Ignores) DefaultOutput = id;
+        return DefaultOutput == id ? null : "Windows no ha cambiado la salida.";
+    }
 }
 
 /// <summary>Multimedia simulada: la app puede aceptar la orden y no cumplirla (Obeys = false).</summary>
@@ -255,6 +267,32 @@ public sealed class AgentLinkTests : IAsyncLifetime
 
         var again = await Dispatcher().DispatchAsync(Req("audio.mic.toggleMute"), "test", default);
         Assert.Equal(new ActionOutcome.Completed("Micrófono activado."), again);
+    }
+
+    [Fact]
+    public async Task Salida_de_audio_cambia_solo_a_una_conectada_y_se_confirma_leyendo_Windows()
+    {
+        await Until(() => _link.Current.Outputs?.Devices.Count == 2);
+        Assert.True(_link.Current.Outputs!.Devices.Single(d => d.Id == "out-altavoces").Default);
+
+        var r = await Dispatcher().DispatchAsync(Req("audio.output.set", ("device", "out-cascos")), "test", default);
+        Assert.Equal(new ActionOutcome.Completed("Ahora suena por Auriculares USB."), r);
+        Assert.Equal("out-cascos", _audio.DefaultOutput);
+        await Until(() => _link.Current.Outputs?.Devices.Single(d => d.Id == "out-cascos").Default == true);
+
+        // Una salida que no existe: no se cambia nada.
+        var gone = await Dispatcher().DispatchAsync(Req("audio.output.set", ("device", "out-hdmi")), "test", default);
+        Assert.Equal(ErrorCodes.NotFound, Assert.IsType<ActionOutcome.Failed>(gone).Code);
+        Assert.Equal("out-cascos", _audio.DefaultOutput);
+
+        // Windows acepta pero no cambia: se dice, no se finge.
+        _audio.Ignores = true;
+        var ignored = await Dispatcher().DispatchAsync(Req("audio.output.set", ("device", "out-altavoces")), "test", default);
+        Assert.Contains("no ha cambiado", Assert.IsType<ActionOutcome.Failed>(ignored).Message, StringComparison.Ordinal);
+
+        // Solo ids: nunca el identificador de Windows ni texto libre.
+        var bad = await Dispatcher().DispatchAsync(Req("audio.output.set", ("device", "{0.0.0.00000000}.{abc}")), "test", default);
+        Assert.Equal(ErrorCodes.BadParams, Assert.IsType<ActionOutcome.Failed>(bad).Code);
     }
 
     [Fact]

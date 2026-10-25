@@ -27,7 +27,8 @@ public sealed record AgentHello(int Protocol, string AgentVersion, int SessionId
 }
 
 public sealed record AgentStateMessage(
-    bool SessionReady, ObsInfo Obs, IReadOnlyList<AppInfo> Apps, string AppsDetection, AudioInfo Audio, MicInfo? Mic = null, MediaInfo? Media = null)
+    bool SessionReady, ObsInfo Obs, IReadOnlyList<AppInfo> Apps, string AppsDetection, AudioInfo Audio, MicInfo? Mic = null, MediaInfo? Media = null,
+    OutputsInfo? Outputs = null)
 {
     [JsonPropertyOrder(-1)] public string Type { get; } = "state";
 }

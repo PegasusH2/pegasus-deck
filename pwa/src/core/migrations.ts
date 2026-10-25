@@ -18,6 +18,7 @@ import {
   upgradePowerButton,
   upgradeV6,
   upgradeV7,
+  upgradeV9,
   removeRetiredActions,
 } from './deck';
 
@@ -102,7 +103,7 @@ export function migrateDeck(raw: unknown): MigrationResult {
     migrated = true;
   } else if (typeof version === 'number' && version > DECK_SCHEMA_VERSION) {
     return { ok: false, error: `La configuración es de una versión más nueva (${version}). Actualiza la PWA.` };
-  } else if (version !== 2 && version !== 3 && version !== 4 && version !== 5 && version !== 6 && version !== 7 && version !== DECK_SCHEMA_VERSION) {
+  } else if (version !== 2 && version !== 3 && version !== 4 && version !== 5 && version !== 6 && version !== 7 && version !== 8 && version !== DECK_SCHEMA_VERSION) {
     return { ok: false, error: 'No es una configuración de Pegasus Deck.' };
   }
 
@@ -115,9 +116,9 @@ export function migrateDeck(raw: unknown): MigrationResult {
     }
     const { schemaVersion: _v, ...body } = v2.data;
     const v3 = upgradeGeneral(body, warnings);
-    data = { schemaVersion: DECK_SCHEMA_VERSION, ...upgradeV7(upgradeV6({ ...v3, buttons: upgradePowerButton(v3.buttons) })) };
+    data = { schemaVersion: DECK_SCHEMA_VERSION, ...upgradeV9(upgradeV7(upgradeV6({ ...v3, buttons: upgradePowerButton(v3.buttons) }))) };
     migrated = true;
-  } else if (version === 3 || version === 4 || version === 5 || version === 6 || version === 7) {
+  } else if (version === 3 || version === 4 || version === 5 || version === 6 || version === 7 || version === 8) {
     // v3/v4 → v5 (ADR-027): solo los controles fijos de General ganan sus variantes (Activar sonido/micrófono).
     // v6 → v7 (ADR-031) y v7 → v8 (ADR-032, ya aplicado arriba) no cambian nada más.
     const v3 = deckSchema.safeParse({ ...(data as object), schemaVersion: DECK_SCHEMA_VERSION });
@@ -126,7 +127,7 @@ export function migrateDeck(raw: unknown): MigrationResult {
       return { ok: false, error: `${issue?.message ?? 'Configuración no válida'} (${issue?.path.join('.') ?? ''})` };
     }
     const { schemaVersion: _s, ...body } = v3.data;
-    data = { schemaVersion: DECK_SCHEMA_VERSION, ...upgradeV7(upgradeV6({ ...body, buttons: upgradePowerButton(body.buttons) })) };
+    data = { schemaVersion: DECK_SCHEMA_VERSION, ...upgradeV9(upgradeV7(upgradeV6({ ...body, buttons: upgradePowerButton(body.buttons) }))) };
     migrated = true;
   }
 
